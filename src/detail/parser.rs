@@ -337,7 +337,7 @@ fn parse_tia_param_syn_expr_type(e_type: &syn::ExprType) -> (TiaParamToken, TiaP
   match e_type.expr.as_ref()
   {
    syn::Expr::Path(e_path) => TiaParamToken::TraitSymbol(e_path.path.segments.first().unwrap().ident.to_string()),
-   _ => panic!(r#"tia syntax error; Check around of `XXX:` (trait symbol pattern), maybe. #TIA-PANIC-10010"#)
+   _ => panic!(r#"tia syntax error; Check around of `XXX:` (trait symbol pattern), maybe. #TIA-PANIC-1010"#)
   },
   match e_type.ty.as_ref()
   {
