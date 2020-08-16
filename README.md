@@ -62,7 +62,7 @@ fn main()
 
 `cargo run`, then you will get the output:
 
-```rust
+```
 foo=123 bar=Hello
 ```
 
@@ -160,7 +160,7 @@ fn main()
 
 `cargo run`:
 
-```rust
+```
 [src\main.rs:30] &foo = 42
 [src\main.rs:31] &mys = MyStruct {
     foo: 42,
@@ -220,7 +220,7 @@ fn main()
 
 Then `cargo run`:
 
-```rust
+```
 123, meow
 32
 ```
