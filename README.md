@@ -11,29 +11,13 @@ This is a syntax sugar proc-macro crate for `trait`, `impl` accessors patterns. 
 
 ## Features
 
-- `tia` will be generate `impl` codes automatically if you set the `#[tia(...)]` directives.
-- Target types: `struct` | `enum` | `union`
-- Setting levels: for all fields | per field
-- `trait` supporting: Can be generate for multiple `trait`s.
-    - `#[tia("MyTrait1", rg, "MyTrait2", si)]` (See also the Example-3 in below.)
-- Generative accessors: Getter-like, Setter-like
-    - `gm` for get/move pattern; for move-semantics tunings.
-    - `g` for get/implicit copy pattern; for primitive types such as `u8`.
-    - `rg` for get/reference pattern; for reference usages. (See also the Example-1 in below.)
-    - `rmg` for get/reference mut pattern; for r/w as object.
-    - `s` for set/implicit move/copy pattern; for primitive types such as `u8` and `Copy`-ables.
-    - `rs` for set/explicit copy with Clone::clone_from pattern; for `Clone`-able without type converting.
-    - `rsi` for set/explicit copy with Into::into pattern; for `Into`-able input types with type converting if required.
-- Useful +features:
-    - `print`, show a generated codes in building-time via stdcerr.
-    - `file`, output a generated codes to files such as `src/.tia/{MyStructSymbol}.rs`.
-    - `file-pretty`, `file` + formatting with `rustfmt` command.
-    - `disable`, disable all tia features in temporary.
-- Naming patters:
-    - Default, will generate a `get_xxxx` | `set_xxxx` prefixed accessor.
-    - Spedified prefix, `rg="awesome"`, will generate `awesome_xxxx` prefixed accessor.
-    - Spedified suffix, `rg+="awesome"`, will generate `xxxx_awesome` suffixed accessor.
-    - Fullname, `rg="awesome"` will generate `awesome` fullname defined accessor.
+- `tia` can be generate a `impl` codes automatically.
+- Target types: `struct` | `enum` | `union`.
+- Setting levels: {for all fields} | {per field}.
+- `trait` supporting: Can be generate with multiple `trait`s. (See also the Example-3 in below.)
+- Generative accessors: Getter-like {move, `Copy`, `&`, `&mut`}, Setter-like { move, `Copy`, `Clone`, `Into` }. (See also the Example-1,2 and Reference/tia directive section.)
+- Useful +features: { `print`, `file-pretty`, `include`, `disable` }. (See also the Reference/features section.)
+- Naming patters: { prefix, suffix, fullname }. (See also the Reference/tia directive section.)
 
 ## Example
 
