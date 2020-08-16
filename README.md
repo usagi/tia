@@ -15,7 +15,7 @@ This is a syntax sugar proc-macro crate for `trait`, `impl` accessors patterns. 
 - Target types: `struct` | `enum` | `union`
 - Setting levels: for all fields | per field
 - `trait` supporting: Can be generate for multiple `trait`s.
-    - `#[tia(MyTrait1: rg, MyTrait2: si)]` (See also the Example-3 in below.)
+    - `#[tia("MyTrait1", rg, "MyTrait2", si)]` (See also the Example-3 in below.)
 - Generative accessors: Getter-like, Setter-like
     - `gm` for get/move pattern; for move-semantics tunings.
     - `g` for get/implicit copy pattern; for primitive types such as `u8`.
