@@ -1,0 +1,28 @@
+[package]
+authors = ["USAGI.NETWORK / Usagi Ito <the@usagi.network>"]
+categories = ["rust-patterns"]
+description = "tia; trait, impl, accessors | automatic"
+documentation = "https://docs.rs/tia/1.0.0/"
+edition = "2018"
+keywords = ["trait", "imlp", "accessors", "automatic", "proc-macro"]
+license = "MIT"
+name = "tia"
+repository = "https://github.com/usagi/tia"
+version = "1.0.0"
+
+[lib]
+proc-macro = true
+
+[features]
+default = []
+disable = [] # Disable all tia features for temporary.
+file = [] # Output the generated code to <src/.tia/{TargetTypeSymbol}.rs>.
+file-pretty = [] # file + `rustfmt`(via command call).
+include = [] # Use include!("<src/.tia/{TargetTypeSymbol}.rs>") instead if generated file is exists.
+include-force = [] # include, but not generate if file is not exists.
+include-pretty = [] # include + file-pretty.
+print = [] # In building time, tia will show the generated result to stderr.
+
+[dependencies]
+lazy_static = "1.4.0"
+syn = {version = "1.0.38", features = ["full", "extra-traits"]}
