@@ -14,16 +14,24 @@ use self::EMPTY_STR as NO_SEPARATOR;
 pub struct Tia
 {
  target_type_symbol:       TargetTypeSymbol,
+ target_type:              TargetType,
  trait_to_field_accessors: TraitToFieldAccessors
 }
 
 pub type TraitToFieldAccessors = HashMap<TraitSymbol, FieldSymbolToFieldParams>;
 pub type FieldSymbolToFieldParams = HashMap<FieldSymbol, FieldParams>;
-// pub type Accessors = HashSet<Accessor>;
 pub type TargetTypeSymbol = String;
 pub type FieldSymbol = String;
 pub type FieldType = String;
 pub type TraitSymbol = String;
+
+#[derive(Debug)]
+pub enum TargetType
+{
+ Struct,
+ Enum,
+ Union
+}
 
 #[derive(Debug, Clone, Eq)]
 pub enum Accessor
@@ -135,7 +143,7 @@ impl Into<pm::TokenStream> for Tia
 {
  fn into(self) -> pm::TokenStream
  {
-  let impl_definitions = generator::generate_impl_definitions(&self.trait_to_field_accessors, &self.target_type_symbol);
+  let impl_definitions = generator::generate_impl_definitions(&self.trait_to_field_accessors, &self.target_type_symbol, self.target_type);
 
   if cfg!(feature = "print")
   {

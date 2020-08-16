@@ -26,12 +26,14 @@ type TraitToAccessors = HashMap<TraitSymbol, HashSet<Accessor>>;
 pub fn parse(i: syn::DeriveInput) -> Tia
 {
  let target_type_symbol = i.ident.to_string();
+ let target_type = get_target_type(&i);
 
  let root_ta = parse_root(&i);
  let trait_to_field_accessors = parse_fields(&i, &root_ta);
 
  Tia {
   target_type_symbol,
+  target_type,
   trait_to_field_accessors
  }
 }
@@ -59,55 +61,62 @@ fn get_field_symbol(field: &syn::Field) -> String
   .to_string()
 }
 
+fn get_target_type(i: &syn::DeriveInput) -> TargetType
+{
+ match i.data
+ {
+  syn::Data::Struct(_) => TargetType::Struct,
+  syn::Data::Enum(_) => TargetType::Enum,
+  syn::Data::Union(_) => TargetType::Union
+ }
+}
+
+fn get_fields(data: &syn::Data) -> syn::punctuated::Iter<syn::Field>
+{
+ match data
+ {
+  syn::Data::Struct(a) => a.fields.iter(),
+  syn::Data::Enum(_a) => panic!("tia not implemented feature: Enum, please write PR or Issue if you want the feature. #TIA-PANIC-1016"),
+  syn::Data::Union(a) => a.fields.named.iter()
+ }
+}
+
 fn parse_fields(i: &syn::DeriveInput, root_ta: &TraitToAccessors) -> TraitToFieldAccessors
 {
  let mut ttfa = TraitToFieldAccessors::default();
 
- match &i.data
+ let fields = get_fields(&i.data);
+
+ for field in fields
  {
-  syn::Data::Struct(data_struct) =>
+  let field_symbol = get_field_symbol(field);
+  let field_type = stringify::decode_type(&field.ty);
+  let ta = match find_tia_attribute(&field.attrs)
   {
-   for field in &data_struct.fields
+   Some(attribute) =>
    {
-    let field_symbol = get_field_symbol(field);
-    let field_type = stringify::decode_type(&field.ty);
-    let ta = match find_tia_attribute(&field.attrs)
+    let field_tia_token_stream = parse_tia_params(attribute);
+    let field_ta = translate_tia_params(field_tia_token_stream);
+    let mut ta = root_ta.clone();
+    for (t, aa) in field_ta
     {
-     Some(attribute) =>
+     let ta_aa = ta.entry(t).or_default();
+     for a in aa
      {
-      let field_tia_token_stream = parse_tia_params(attribute);
-      let field_ta = translate_tia_params(field_tia_token_stream);
-      let mut ta = root_ta.clone();
-      // ta (root.get, root.set)
-      for (t, aa) in field_ta
-      {
-       let ta_aa = ta.entry(t).or_default();
-       for a in aa
-       {
-        ta_aa.replace(a);
-       }
-      }
-      ta
-     },
-     None => root_ta.clone()
-    };
-    for (t, a) in ta
-    {
-     ttfa.entry(t).or_default().insert(field_symbol.clone(), FieldParams {
-      field_type: field_type.clone(),
-      accessors:  a
-     });
+      ta_aa.replace(a);
+     }
     }
-   }
-  },
-  syn::Data::Enum(_data_enum) =>
+    ta
+   },
+   None => root_ta.clone()
+  };
+  for (t, a) in ta
   {
-   panic!("tia not implemented feature: Enum, please write PR or Issue if you want the feature. #TIA-PANIC-1016")
-  },
-  syn::Data::Union(_data_union) =>
-  {
-   panic!("tia not implemented feature: Union, please write PR or Issue if you want the feature. #TIA-PANIC-1015")
-  },
+   ttfa.entry(t).or_default().insert(field_symbol.clone(), FieldParams {
+    field_type: field_type.clone(),
+    accessors:  a
+   });
+  }
  }
 
  ttfa
