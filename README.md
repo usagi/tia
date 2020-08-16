@@ -269,19 +269,114 @@ impl Sushi for MyStruct
 }
 ```
 
-## Example-4; Misc.
+## Reference
 
-The `include` feature:
+### Usage
+
+1. Preparing, add `tia="*"` in `[dependencies]` section of the project `Cargo.toml` file. ( Or I like `cargo add tia` via [cargo-edit][] )
+   - FYI: The `file-pretty` features is good tool for your debugging. Read the bottom section "features" if you want.
+2. Use:
+   1. Write `#[derive(Tia)]` proc-macro on head of your struct|enum|union.
+   2. Write `#[tia(...)]` proc-macro below the `#[derive(Tia)]` (for struct|enum|union-level settings) or top of the specific fields.
+      - `...` is explanate in the next section "tia directives".
+
+[cargo-edit]: https://github.com/killercup/cargo-edit
+
+### tia directives
+
+`tia`'s proc-macro can parse the pattern:
+
+```
+#[tia( $tia_directive_0, $tia_directive_1,$tia_directive_2, ... )]
+```
+
+And the `$tia_directive` pattern:
+
+1. Accessor directive
+   - Accessors:
+     - Getter accessor like:
+       - `gm` => **⚠ Move ⚠** pattern, it is NOT use for casually; like `fn (self) -> i32 { self.value }`
+       - `g` => For `Copy`-able values, for use a primitive types such as `u8`, `f32` or a `impl Copy`-ed types; like `return &self.value`.
+       - `rg` => Return a reference `&` pattern. It can be use in casually for most situations.
+       - `rmg` => Return a reference mutable `&mut`. Sometimes useful, and sometimes so complex and difficult.
+     - Setter accelike:
+       - `s` => Raw value move pattern.
+       - `rs` => Reference `&` pattern, for `Copy`-able types.
+       - `rgc` => `Clone` pattern, for `Clone`-able types such as `String`. This pattern require the same type for the input.
+       - `rgi` => `Into` pattern, for `Into`-able types such as `String`. This pattern could be type conversions. For eg, `&str`|`String`|`&String` and more types are input to `String` with this pattern.
+   - Naming policy
+     - Default ( eg. `g`, `rg` `rgi`) => Getters are same as the Prefix with "get", Setters are same as the Prefix with "set".
+     - `g="my_awesome_prefix"` => Prefix with specialized prefix-part string pattern. It will be generate `fn my_awesome_prefix_xxxx` for `xxxx` field symbol.
+     - `g+="my_awesome_suffix"` => Suffix with specialized suffix-part string pattern. It will be generate `fn xxxx_my_awesome_suffix` for `xxxx` field symbol.
+     - `g*="my_awesome_fullname"` => Fullname pattern. It will be generate `fn my_awesome_fullname` for a field.
+2. Trait directive
+   - Default ( no trait directives ) => It will be generate `impl for MyStruct` codes for a fields.
+   - `"TraitSymbol"` => It will be generate `impl TraitSymbol for MyStruct` codes for a fields that appear in the after of this directive.
+   - `""` => It will be generate `impl for MyStruct` codes for a fields that appear in the after of this directive.
+
+### features
+
+#### `disable`
+
+Usage example:
 
 ```toml
 [dependencies]
-tia={ version="*", features=["file-pretty","include"] }
+tia={ version="*", features=["disable"] }
+```
+
+- `tia` will be output nothing.
+- But `tia` is not removed, thus it allow the `#[derive(Tia)]` and `#[tia(...)]` proc-macros with no effects.
+
+#### `print`
+
+Usage example:
+
+```toml
+[dependencies]
+tia={ version="*", features=["print"] }
+```
+
+- `tia` will be output the generated code to STDERR.
+    -  But it is difficully to human eyes, thus `file-pretty` is better for human eyes.
+
+#### `file`|`file-pretty`
+
+Usage example:
+
+```toml
+[dependencies]
+tia={ version="*", features=["file-pretty"] }
+```
+
+- `tia` will be output/update the generated code to the file such as `src/.tia/MyStruct.rs`.
+- This file is not for use in build, but if you want check the generated code with your eyes then it helpful.
+
+What's the difference of `file` and `file-pretty`:
+
+- `file` will be output the raw generated code. It is very compressed.
+- `file-pretty` will be output the raw generated code, and then apply `rustfmt` automatically.
+  - note: this feature reqwire the `rustfmt` command in your development environment. (It is not a lib crate dependency.)
+
+#### `include`|`include-pretty`|`include-force`
+
+Usage example:
+
+```toml
+[dependencies]
+tia={ version="*", features=["include-pretty"] }
 ```
 
 `tia` will be:
 
 1. Generate codes if not exists.
-2. Generate `include!` such as `include!("src/.tia/MyStruct")` instead.
+2. Generate `include!(...)` macro such as `include!("src/.tia/MyStruct")` instead.
+
+What's the difference of `include`, `include-pretty` and `include-force`:
+
+- `include` will be generate (=`file`) code if the generated code is not found.
+- `include-pretty` will be generate and prettify (=`file-pretty`) if the generated code is not found.
+- `include-force` will not be generate if the generated code is not found, maybe build will stop with an error(s).
 
 ## Note
 
