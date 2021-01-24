@@ -84,7 +84,7 @@ pub fn decode_type(ty: &syn::Type) -> String
   syn::Type::TraitObject(_ts) => panic!("tia not implemented feature: TraitObject, please write PR or Issue if you want the feature. #TIA-PANIC-3004"),
   syn::Type::Tuple(t) => format!("({})", t.elems.iter().map(|t| decode_type(t)).collect::<Vec<_>>().join(COMMA)),
   syn::Type::Verbatim(v) => v.to_string(),
-  syn::Type::__Nonexhaustive => panic!("tia not implemented feature: __Nonexhaustive, please write PR or Issue if you want the feature. #TIA-PANIC-3003")
+  syn::Type::__TestExhaustive(..) => panic!("tia not implemented feature: __TestExhaustive, please write PR or Issue if you want the feature. #TIA-PANIC-3003")
  }
 }
 
