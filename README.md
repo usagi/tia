@@ -370,6 +370,12 @@ What's the difference of `include`, `include-pretty` and `include-force`:
 
 - [MIT](LICENSE.md)
 
+## Contributor
+
+- [@yrashk](https://github.com/yrashk)
+
+Thank you!😍
+
 ## Author
 
 - USAGI.NETWORK / Usagi Ito <https://github.com/usagi/>

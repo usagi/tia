@@ -2,13 +2,13 @@
 authors = ["USAGI.NETWORK / Usagi Ito <the@usagi.network>"]
 categories = ["rust-patterns"]
 description = "tia; trait, impl, accessors | automatic"
-documentation = "https://docs.rs/tia/1.0.0/"
+documentation = "https://docs.rs/tia/"
 edition = "2018"
 keywords = ["trait", "imlp", "accessors", "automatic", "proc-macro"]
 license = "MIT"
 name = "tia"
 repository = "https://github.com/usagi/tia"
-version = "1.0.0"
+version = "1.0.1"
 
 [lib]
 proc-macro = true
