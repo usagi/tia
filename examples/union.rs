@@ -32,8 +32,8 @@ fn main()
 
  unsafe {
   let v = p.get_u();
-  println!( "third value, p = U{{f:1.0f64}} -> p.get_u() {} ne {}" , v, 1u128); // maybe 4607182418800017408 in x86_64
-  println!( "third value, p.f {} eq {}", p.f, 1f64);
+  println!("third value, p = U{{f:1.0f64}} -> p.get_u() {} ne {}", v, 1u128); // maybe 4607182418800017408 in x86_64
+  println!("third value, p.f {} eq {}", p.f, 1f64);
  }
 
  print!("Complete! This is the example version designed for human-eyes, if you want the testing version then read tests/test.rs.")

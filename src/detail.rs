@@ -133,10 +133,7 @@ pub struct FieldParams
 
 impl Tia
 {
- pub fn new(i: syn::DeriveInput) -> Self
- {
-  parser::parse(i)
- }
+ pub fn new(i: syn::DeriveInput) -> Self { parser::parse(i) }
 }
 
 impl Into<pm::TokenStream> for Tia

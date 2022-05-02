@@ -25,7 +25,9 @@ type TraitToAccessors = HashMap<TraitSymbol, HashSet<Accessor>>;
 
 pub fn parse(i: syn::DeriveInput) -> Tia
 {
- let target_type_symbol = i.ident.to_string();
+ let target_type_symbol = i
+  .ident
+  .to_string();
  let target_type = get_target_type(&i);
 
  let root_ta = parse_root(&i);
@@ -75,9 +77,18 @@ fn get_fields(data: &syn::Data) -> syn::punctuated::Iter<syn::Field>
 {
  match data
  {
-  syn::Data::Struct(a) => a.fields.iter(),
+  syn::Data::Struct(a) =>
+  {
+   a.fields
+    .iter()
+  },
   syn::Data::Enum(_a) => panic!("tia not implemented feature: Enum, please write PR or Issue if you want the feature. #TIA-PANIC-1016"),
-  syn::Data::Union(a) => a.fields.named.iter()
+  syn::Data::Union(a) =>
+  {
+   a.fields
+    .named
+    .iter()
+  },
  }
 }
 
@@ -100,7 +111,9 @@ fn parse_fields(i: &syn::DeriveInput, root_ta: &TraitToAccessors) -> TraitToFiel
     let mut ta = root_ta.clone();
     for (t, aa) in field_ta
     {
-     let ta_aa = ta.entry(t).or_default();
+     let ta_aa = ta
+      .entry(t)
+      .or_default();
      for a in aa
      {
       ta_aa.replace(a);
@@ -112,10 +125,13 @@ fn parse_fields(i: &syn::DeriveInput, root_ta: &TraitToAccessors) -> TraitToFiel
   };
   for (t, a) in ta
   {
-   ttfa.entry(t).or_default().insert(field_symbol.clone(), FieldParams {
-    field_type: field_type.clone(),
-    accessors:  a
-   });
+   ttfa
+    .entry(t)
+    .or_default()
+    .insert(field_symbol.clone(), FieldParams {
+     field_type: field_type.clone(),
+     accessors:  a
+    });
   }
  }
 
@@ -191,9 +207,12 @@ fn translate_tia_params(tia_param_token_stream: TiaParamTokenStream) -> TraitToA
        "tia syntax error: Check around of directives, maybe you wrote an unsupported keyword or typo such as `&g`, `rms` or `brabrabra` \
         #TIA-PANIC-1014."
       )
-     },
+     }
     };
-    ta.entry(current_trait_symbol.clone()).or_default().replace(accessor);
+    ta
+     .entry(current_trait_symbol.clone())
+     .or_default()
+     .replace(accessor);
    },
    TiaParamToken::CustomDirective {
     key,
@@ -250,9 +269,12 @@ fn translate_tia_params(tia_param_token_stream: TiaParamTokenStream) -> TraitToA
       panic!(
        r#"tia syntax error: Check around of directive, maybe you wrote an unsupported keyword or typo such as `&g="bad-symbol"`, `rms='bad_quote'` or `brabrabra`. #TIA-PANIC-1013"#
       )
-     },
+     }
     };
-    ta.entry(current_trait_symbol.clone()).or_default().replace(accessor);
+    ta
+     .entry(current_trait_symbol.clone())
+     .or_default()
+     .replace(accessor);
    }
   }
  }
@@ -262,20 +284,26 @@ fn translate_tia_params(tia_param_token_stream: TiaParamTokenStream) -> TraitToA
 
 fn find_tia_attribute(attributes: &[syn::Attribute]) -> Option<&syn::Attribute>
 {
- attributes.iter().find(|&a| {
-  let attribute_path_segments = &a.path.segments;
-  match attribute_path_segments.first()
-  {
-   Some(s) if s.ident == TIA => true,
-   _ => false
-  }
- })
+ attributes
+  .iter()
+  .find(|&a| {
+   let attribute_path_segments = &a
+    .path
+    .segments;
+   match attribute_path_segments.first()
+   {
+    Some(s) if s.ident == TIA => true,
+    _ => false
+   }
+  })
 }
 
 fn parse_tia_params(attribute: &syn::Attribute) -> TiaParamTokenStream
 {
  let parser = syn::punctuated::Punctuated::<syn::Expr, syn::Token![,]>::parse_terminated;
- let tokens = attribute.tokens.clone();
+ let tokens = attribute
+  .tokens
+  .clone();
  let tokens = parser
   .parse(tokens.into())
   .expect("tia syntax error: syn parse was failed. #TIA-PANIC-1012");
@@ -286,7 +314,9 @@ fn parse_tia_params(attribute: &syn::Attribute) -> TiaParamTokenStream
   Some(syn::Expr::Tuple(root)) =>
   {
    let mut tia_params: TiaParamTokenStream = vec![];
-   for expr in root.elems.iter()
+   for expr in root
+    .elems
+    .iter()
    {
     tia_params.append(&mut parse_tia_param_syn_expr(expr));
    }
@@ -294,7 +324,14 @@ fn parse_tia_params(attribute: &syn::Attribute) -> TiaParamTokenStream
   },
 
   // #[tia(x)] or #[tia(t:x)] pattern
-  Some(syn::Expr::Paren(root)) => parse_tia_param_syn_expr(root.expr.as_ref()),
+  Some(syn::Expr::Paren(root)) =>
+  {
+   parse_tia_param_syn_expr(
+    root
+     .expr
+     .as_ref()
+   )
+  },
   // It is not an error that the tia attribute does not exists.
   _ => vec![]
  }
@@ -334,14 +371,40 @@ fn parse_tia_param_syn_expr(expr: &syn::Expr) -> TiaParamTokenStream
 fn parse_tia_param_syn_expr_type(e_type: &syn::ExprType) -> (TiaParamToken, TiaParamToken)
 {
  (
-  match e_type.expr.as_ref()
+  match e_type
+   .expr
+   .as_ref()
   {
-   syn::Expr::Path(e_path) => TiaParamToken::TraitSymbol(e_path.path.segments.first().unwrap().ident.to_string()),
+   syn::Expr::Path(e_path) =>
+   {
+    TiaParamToken::TraitSymbol(
+     e_path
+      .path
+      .segments
+      .first()
+      .unwrap()
+      .ident
+      .to_string()
+    )
+   },
    _ => panic!(r#"tia syntax error; Check around of `XXX:` (trait symbol pattern), maybe. #TIA-PANIC-1010"#)
   },
-  match e_type.ty.as_ref()
+  match e_type
+   .ty
+   .as_ref()
   {
-   syn::Type::Path(t_path) => TiaParamToken::DefaultDirective(t_path.path.segments.first().unwrap().ident.to_string()),
+   syn::Type::Path(t_path) =>
+   {
+    TiaParamToken::DefaultDirective(
+     t_path
+      .path
+      .segments
+      .first()
+      .unwrap()
+      .ident
+      .to_string()
+    )
+   },
    _ => panic!(r#"tia syntax error; Check around of `XXX: YYY` (first tia directive after a trait symbol pattern), maybe. #TIA-PANIC-1009"#)
   }
  )
@@ -349,12 +412,22 @@ fn parse_tia_param_syn_expr_type(e_type: &syn::ExprType) -> (TiaParamToken, TiaP
 
 fn parse_tia_param_syn_expr_path(e_path: &syn::ExprPath) -> TiaParamToken
 {
- TiaParamToken::DefaultDirective(e_path.path.segments.first().unwrap().ident.to_string())
+ TiaParamToken::DefaultDirective(
+  e_path
+   .path
+   .segments
+   .first()
+   .unwrap()
+   .ident
+   .to_string()
+ )
 }
 
 fn parse_tia_param_syn_expr_assign_op(e_assign_op: &syn::ExprAssignOp) -> TiaParamToken
 {
- match e_assign_op.left.as_ref()
+ match e_assign_op
+  .left
+  .as_ref()
  {
   syn::Expr::Path(left_part) =>
   {
@@ -366,7 +439,9 @@ fn parse_tia_param_syn_expr_assign_op(e_assign_op: &syn::ExprAssignOp) -> TiaPar
     .ident
     .to_string();
 
-   match e_assign_op.right.as_ref()
+   match e_assign_op
+    .right
+    .as_ref()
    {
     syn::Expr::Lit(right_part) =>
     {
@@ -391,7 +466,7 @@ fn parse_tia_param_syn_expr_assign_op(e_assign_op: &syn::ExprAssignOp) -> TiaPar
        panic!(
         r#"tia syntax error; Check around of `"value"` (key part of a `key+="value"` or `key*="value"` pattern tia directive with string pattern), maybe. #TIA-PANIC-1007"#
        )
-      },
+      }
      }
     },
     _ =>
@@ -399,7 +474,7 @@ fn parse_tia_param_syn_expr_assign_op(e_assign_op: &syn::ExprAssignOp) -> TiaPar
      panic!(
       r#"tia syntax error; Check around of `"value"` (value part of a `key+="value"` or `key*="value"` pattern tia directive with string pattern), maybe. #TIA-PANIC-1006"#
      )
-    },
+    }
    }
   },
   _ =>
@@ -407,13 +482,15 @@ fn parse_tia_param_syn_expr_assign_op(e_assign_op: &syn::ExprAssignOp) -> TiaPar
    panic!(
     r#"tia syntax error; Check around of `key="value"` (key-value pair of tia directive with string pattern), maybe. #TIA-PANIC-1005"#
    )
-  },
+  }
  }
 }
 
 fn parse_tia_param_syn_expr_assign(e_assign: &syn::ExprAssign) -> TiaParamToken
 {
- match e_assign.left.as_ref()
+ match e_assign
+  .left
+  .as_ref()
  {
   syn::Expr::Path(left_part) =>
   {
@@ -425,7 +502,9 @@ fn parse_tia_param_syn_expr_assign(e_assign: &syn::ExprAssign) -> TiaParamToken
     .ident
     .to_string();
 
-   match e_assign.right.as_ref()
+   match e_assign
+    .right
+    .as_ref()
    {
     syn::Expr::Lit(right_part) =>
     {
@@ -443,7 +522,7 @@ fn parse_tia_param_syn_expr_assign(e_assign: &syn::ExprAssign) -> TiaParamToken
        panic!(
         r#"tia syntax error; Check around of `"value"` (key part of a `key="value"` pattern tia directive with string pattern), maybe. #TIA-PANIC-1003"#
        )
-      },
+      }
      }
     },
     _ =>
@@ -451,7 +530,7 @@ fn parse_tia_param_syn_expr_assign(e_assign: &syn::ExprAssign) -> TiaParamToken
      panic!(
       r#"tia syntax error; Check around of `"value"` (value part of a `key="value"` pattern tia directive with string pattern), maybe. #TIA-PANIC-1002"#
      )
-    },
+    }
    }
   },
   _ =>
@@ -459,6 +538,6 @@ fn parse_tia_param_syn_expr_assign(e_assign: &syn::ExprAssign) -> TiaParamToken
    panic!(
     r#"tia syntax error; Check around of `key="value"` (key-value pair of tia directive with string pattern), maybe. #TIA-PANIC-1001"#
    )
-  },
+  }
  }
 }

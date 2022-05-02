@@ -27,7 +27,9 @@ fn generate_impl_definition(
  let body = generate_impl_body(field_to_accessors, is_pub, target_type);
  let footer = generate_impl_footer();
 
- vec![header, body, footer].join(NO_SEPARATOR).into()
+ vec![header, body, footer]
+  .join(NO_SEPARATOR)
+  .into()
 }
 
 fn generate_impl_header(trait_symbol: &TraitSymbol, impl_target_symbol: &String) -> String
@@ -49,10 +51,7 @@ fn generate_impl_body(field_to_accessors: &FieldSymbolToFieldParams, is_pub: boo
   .join(NO_SEPARATOR)
 }
 
-fn generate_impl_footer() -> String
-{
- "}".into()
-}
+fn generate_impl_footer() -> String { "}".into() }
 
 fn generate_field_accessors(field_symbol: &FieldSymbol, field_params: &FieldParams, is_pub: bool, target_type: &TargetType) -> String
 {
@@ -129,7 +128,7 @@ fn generate_get_accessor(
     "fn {}(&mut self)->&mut {}{{&mut self.{}}}",
     function_symbol, field_type, field_symbol
    )
-  },
+  }
  }
 }
 
@@ -162,7 +161,7 @@ fn generate_set_accessor(
     "fn {}<T:Into<{}>>(&mut self,v:T){{self.{}=v.into();}}",
     function_symbol, field_type, field_symbol
    )
-  },
+  }
  }
 }
 
@@ -178,6 +177,6 @@ fn generate_function_symbol(field_symbol: &FieldSymbol, field_symbol_policy: &Fi
    panic!(
     "tia implementation bug: This message might be shown for crate users. But if you see, then report an issue please. #TIA-PANIC-2001"
    )
-  },
+  }
  }
 }

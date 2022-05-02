@@ -19,13 +19,23 @@ pub fn decode_type(ty: &syn::Type) -> String
  {
   syn::Type::Array(ar) =>
   {
-   let elem = decode_type(ar.elem.as_ref());
+   let elem = decode_type(
+    ar
+     .elem
+     .as_ref()
+   );
    let len = decode_expr(&ar.len);
    format!("[{};{}]", elem, len)
   },
-  syn::Type::BareFn(_bf) => panic!("tia not implemented feature: BareFn, please write PR or Issue if you want the feature. #TIA-PANIC-3007"),
+  syn::Type::BareFn(_bf) =>
+  {
+   panic!("tia not implemented feature: BareFn, please write PR or Issue if you want the feature. #TIA-PANIC-3007")
+  },
   syn::Type::Group(_gr) => panic!("tia not implemented feature: Group, please write PR or Issue if you want the feature. #TIA-PANIC-3006"),
-  syn::Type::ImplTrait(_it) => panic!("tia not implemented feature: ImplTrait, please write PR or Issue if you want the feature. #TIA-PANIC-3005"),
+  syn::Type::ImplTrait(_it) =>
+  {
+   panic!("tia not implemented feature: ImplTrait, please write PR or Issue if you want the feature. #TIA-PANIC-3005")
+  },
   syn::Type::Infer(_) => "_".into(),
   syn::Type::Macro(m) =>
   {
@@ -34,26 +44,55 @@ pub fn decode_type(ty: &syn::Type) -> String
     .path
     .segments
     .iter()
-    .map(|s| s.ident.to_string())
+    .map(|s| {
+     s.ident
+      .to_string()
+    })
     .collect::<Vec<_>>()
     .join(COLON_COLON_SEPARATOR);
-   let delimiters = match m.mac.delimiter
+   let delimiters = match m
+    .mac
+    .delimiter
    {
     syn::MacroDelimiter::Brace(_) => ("{", "}"),
     syn::MacroDelimiter::Bracket(_) => ("<", ">"),
     syn::MacroDelimiter::Paren(_) => ("(", ")")
    };
-   format!("{}!{}{}{}", path, delimiters.0, m.mac.tokens.to_string(), delimiters.1)
+   format!(
+    "{}!{}{}{}",
+    path,
+    delimiters.0,
+    m.mac
+     .tokens
+     .to_string(),
+    delimiters.1
+   )
   },
   syn::Type::Never(_) => "!".into(),
-  syn::Type::Paren(p) => format!("({})", decode_type(p.elem.as_ref())),
+  syn::Type::Paren(p) =>
+  {
+   format!(
+    "({})",
+    decode_type(
+     p.elem
+      .as_ref()
+    )
+   )
+  },
   syn::Type::Path(type_path) =>
   {
    type_path
     .path
     .segments
     .iter()
-    .map(|s| format!("{}{}", s.ident.to_string(), decode_type_path_arguments(&s.arguments)))
+    .map(|s| {
+     format!(
+      "{}{}",
+      s.ident
+       .to_string(),
+      decode_type_path_arguments(&s.arguments)
+     )
+    })
     .collect::<Vec<_>>()
     .join(COLON_COLON_SEPARATOR)
   },
@@ -61,8 +100,13 @@ pub fn decode_type(ty: &syn::Type) -> String
   {
    format!(
     "*{}{}",
-    p.mutability.map(|_| "mut ").unwrap_or_default(),
-    decode_type(p.elem.as_ref())
+    p.mutability
+     .map(|_| "mut ")
+     .unwrap_or_default(),
+    decode_type(
+     p.elem
+      .as_ref()
+    )
    )
   },
   syn::Type::Reference(re) =>
@@ -72,19 +116,46 @@ pub fn decode_type(ty: &syn::Type) -> String
     .as_ref()
     .map(|lifetime| format!("{} ", lifetime.to_string()))
     .unwrap_or_default();
-   let m = re.mutability.map(|_| "mut ".to_string()).unwrap_or_default();
-   let elem = decode_type(&re.elem.as_ref());
+   let m = re
+    .mutability
+    .map(|_| "mut ".to_string())
+    .unwrap_or_default();
+   let elem = decode_type(
+    &re
+     .elem
+     .as_ref()
+   );
    format!("&{}{}{}", lifetime, m, elem)
   },
   syn::Type::Slice(sl) =>
   {
-   let t = decode_type(sl.elem.as_ref());
+   let t = decode_type(
+    sl
+     .elem
+     .as_ref()
+   );
    format!("[{}]", t)
   },
-  syn::Type::TraitObject(_ts) => panic!("tia not implemented feature: TraitObject, please write PR or Issue if you want the feature. #TIA-PANIC-3004"),
-  syn::Type::Tuple(t) => format!("({})", t.elems.iter().map(|t| decode_type(t)).collect::<Vec<_>>().join(COMMA)),
+  syn::Type::TraitObject(_ts) =>
+  {
+   panic!("tia not implemented feature: TraitObject, please write PR or Issue if you want the feature. #TIA-PANIC-3004")
+  },
+  syn::Type::Tuple(t) =>
+  {
+   format!(
+    "({})",
+    t.elems
+     .iter()
+     .map(|t| decode_type(t))
+     .collect::<Vec<_>>()
+     .join(COMMA)
+   )
+  },
   syn::Type::Verbatim(v) => v.to_string(),
-  syn::Type::__TestExhaustive(..) => panic!("tia not implemented feature: __TestExhaustive, please write PR or Issue if you want the feature. #TIA-PANIC-3003")
+  syn::Type::__TestExhaustive(..) =>
+  {
+   panic!("tia not implemented feature: __TestExhaustive, please write PR or Issue if you want the feature. #TIA-PANIC-3003")
+  },
  }
 }
 

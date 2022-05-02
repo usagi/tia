@@ -11,7 +11,8 @@ struct MyStruct
 
  baz: f64, // <-- #[tia(rg, s)]
 
- #[tia(g)] // <-- #[tia(rg, s)] + #[tia(g)] => #[tia(g, s)] !! NOTE: Could be use for Copy-ables such as u8, but g pattern could not be use non-Copy-ables such as Vec<u8>
+ #[tia(g)]
+ // <-- #[tia(rg, s)] + #[tia(g)] => #[tia(g, s)] !! NOTE: Could be use for Copy-ables such as u8, but g pattern could not be use non-Copy-ables such as Vec<u8>
  brabrabra: u8,
 
  #[tia(gm)] // <-- #[tia(rg, s)] + #[tia(g)] => #[tia(gm, s)] !! WARNING: Could be move any types, but gm pattern will drop self
@@ -54,5 +55,5 @@ fn main()
  let y = mys.get_hogefuga(); // gm, get-move accessor will be drop mys
  dbg!(y);
  // mys was dropped, it could not be compile.
- //dbg!(mys)
+ // dbg!(mys)
 }
