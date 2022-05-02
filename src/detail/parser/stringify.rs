@@ -152,10 +152,11 @@ pub fn decode_type(ty: &syn::Type) -> String
    )
   },
   syn::Type::Verbatim(v) => v.to_string(),
-  syn::Type::__TestExhaustive(..) =>
+  _unknown =>
   {
-   panic!("tia not implemented feature: __TestExhaustive, please write PR or Issue if you want the feature. #TIA-PANIC-3003")
-  },
+   eprintln!("[Warning] Tia detect unknown token stream part. #TIA-WARNING-3003");
+   "".to_string()
+  }
  }
 }
 
