@@ -1,5 +1,4 @@
 [![github]](https://github.com/usagi/tia)&ensp;[![crates-io]](https://crates.io/crates/tia)&ensp;[![docs-rs]](https://docs.rs/tia)<br>
-[![Build Status](https://travis-ci.org/usagi/tia.svg?branch=master)](https://travis-ci.org/usagi/tia)
 
 [github]: https://img.shields.io/badge/github-8da0cb?style=for-the-badge&labelColor=555555&logo=github
 [crates-io]: https://img.shields.io/badge/crates.io-fc8d62?style=for-the-badge&labelColor=555555&logo=rust
