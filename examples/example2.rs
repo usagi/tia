@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use tia::Tia; // use
 
 #[derive(Tia, Debug, Default)] // derive
