@@ -25,4 +25,4 @@ print = [] # In building time, tia will show the generated result to stderr.
 
 [dependencies]
 lazy_static = "1.4.0"
-syn = {version = ">=1.0.60", features = ["full", "extra-traits"]}
+syn = {version = "1.0.92", features = ["full", "extra-traits"]}
