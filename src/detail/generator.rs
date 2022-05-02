@@ -1,10 +1,8 @@
 use super::*;
-use lazy_static::lazy_static;
+use once_cell::sync::Lazy;
 
-lazy_static! {
- static ref DEFAULT_GET_FIELD_SYMBOL_POLICY: FieldSymbolPolicy = FieldSymbolPolicy::Prefix("get".into());
- static ref DEFAULT_SET_FIELD_SYMBOL_POLICY: FieldSymbolPolicy = FieldSymbolPolicy::Prefix("set".into());
-}
+static DEFAULT_GET_FIELD_SYMBOL_POLICY: Lazy<FieldSymbolPolicy> = Lazy::new(|| FieldSymbolPolicy::Prefix("get".to_string()));
+static DEFAULT_SET_FIELD_SYMBOL_POLICY: Lazy<FieldSymbolPolicy> = Lazy::new(|| FieldSymbolPolicy::Prefix("set".to_string()));
 
 pub fn generate_impl_definitions(ttfa: &TraitToFieldAccessors, impl_target_symbol: &String, target_type: TargetType) -> String
 {

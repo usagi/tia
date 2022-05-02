@@ -24,5 +24,5 @@ include-pretty = [] # include + file-pretty.
 print = [] # In building time, tia will show the generated result to stderr.
 
 [dependencies]
-lazy_static = "1.4.0"
+once_cell = "1.10.0"
 syn = {version = "1.0.92", features = ["full", "extra-traits"]}
