@@ -278,15 +278,15 @@ And the `$tia_directive` pattern:
 1. Accessor directive
    - Accessors:
      - Getter accessor like:
-       - `gm` => **⚠ Move ⚠** pattern, it is NOT use for casually; like `fn (self) -> i32 { self.value }`
-       - `g` => For `Copy`-able values, for use a primitive types such as `u8`, `f32` or a `impl Copy`-ed types; like `return &self.value`.
-       - `rg` => Return a reference `&` pattern. It can be use in casually for most situations.
-       - `rmg` => Return a reference mutable `&mut`. Sometimes useful, and sometimes so complex and difficult.
+       - `gm` => (`[g]et [m]ove`) **⚠ Move ⚠** pattern, it is NOT use for casually; like `fn (self) -> i32 { self.value }`
+       - `g` => (`[g]et`) For `Copy`-able values, for use a primitive types such as `u8`, `f32` or a `impl Copy`-ed types; like `return &self.value`.
+       - `rg` => (`[r]eference [g]et`) Return a reference `&` pattern. It can be use in casually for most situations.
+       - `rmg` => (`[r]eference [m]ut [g]et`) Return a reference mutable `&mut`. Sometimes useful, and sometimes so complex and difficult.
      - Setter accelike:
-       - `s` => Raw value move pattern.
-       - `rs` => Reference `&` pattern, for `Copy`-able types.
-       - `rgc` => `Clone` pattern, for `Clone`-able types such as `String`. This pattern require the same type for the input.
-       - `rgi` => `Into` pattern, for `Into`-able types such as `String`. This pattern could be type conversions. For eg, `&str`|`String`|`&String` and more types are input to `String` with this pattern.
+       - `s` => (`[s]et`) Raw value move pattern.
+       - `rs` => (`[r]eference [s]et`) Reference `&` pattern, for `Copy`-able types.
+       - `rsc` => (`[r]eference [s]et [c]lone`) `Clone` pattern, for `Clone`-able types such as `String`. This pattern require the same type for the input.
+       - `rsi` => (`[r]eference [s]et [i]nto`) `Into` pattern, for `Into`-able types such as `String`. This pattern could be type conversions. For eg, `&str`|`String`|`&String` and more types are input to `String` with this pattern.
    - Naming policy
      - Default ( eg. `g`, `rg` `rgi`) => Getters are same as the Prefix with "get", Setters are same as the Prefix with "set".
      - `g="my_awesome_prefix"` => Prefix with specialized prefix-part string pattern. It will be generate `fn my_awesome_prefix_xxxx` for `xxxx` field symbol.
